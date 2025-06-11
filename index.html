@@ -58,6 +58,10 @@
       margin: 10px;
       min-width: 220px;
     }
+    .btn:focus {
+      outline: 2px solid #f39c12;
+      outline-offset: 2px;
+    }
     input {
       padding: 12px;
       border-radius: 8px;
@@ -107,6 +111,9 @@
           const btn = document.createElement("button");
           btn.className = "btn";
           btn.textContent = opt;
+          btn.type = "button";
+          btn.setAttribute("aria-label", opt);
+          btn.tabIndex = 0;
           btn.onclick = () => nextStep(opt);
           responseArea.appendChild(btn);
         });
@@ -118,6 +125,9 @@
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.textContent = "Suivant";
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Suivant");
+        btn.tabIndex = 0;
         btn.onclick = () => {
           const val1 = input1.value.trim();
           const val2 = input2.value.trim();
@@ -138,6 +148,9 @@
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.textContent = "Suivant";
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Suivant");
+        btn.tabIndex = 0;
         btn.onclick = () => {
           const val1 = input1.value.trim();
           const val2 = input2.value.trim();
@@ -158,6 +171,9 @@
         const btn = document.createElement("button");
         btn.className = "btn";
         btn.textContent = "Envoyer";
+        btn.type = "button";
+        btn.setAttribute("aria-label", "Envoyer");
+        btn.tabIndex = 0;
         btn.onclick = () => {
           const email = input1.value.trim();
           const tel = input2.value.trim();
