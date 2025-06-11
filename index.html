@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>MRM Group - Diagnostic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    .header {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      background-color: #000;
+    }
+    .header img {
+      height: 50px;
+    }
+    .chat-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: calc(100vh - 80px);
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    .bubble {
+      max-width: 90%;
+      padding: 20px;
+      margin: 10px;
+      border-radius: 16px;
+      font-size: 18px;
+      background-color: #1c1c1c;
+      animation: fadeIn 0.5s ease-in-out;
+      text-align: center;
+    }
+    .response {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background-color: white;
+      color: black;
+      border: none;
+      padding: 15px 24px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 10px;
+      min-width: 220px;
+    }
+    input {
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      width: 250px;
+      margin: 10px 0;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="logo.png" alt="MRM Group">
+  </div>
+  <div class="chat-screen" id="chat">
+    <div class="bubble" id="question">Bienvenue chez MRM Group ⚡️<br>Je suis Reda, consultant en optimisation de facture. Prêt(e) à économiser ?</div>
+    <div class="response" id="responseArea"></div>
+  </div>
+
+  <script>
+    const steps = [
+      { type: "buttons", question: "Quel est votre opérateur actuel ?", options: ["Proximus", "Orange", "Telenet", "Hey!", "Digi", "Autre"] },
+      { type: "buttons", question: "Combien payez-vous actuellement ?", options: ["Moins de 40€", "40 à 60€", "Plus de 60€", "Je ne sais pas"] },
+      { type: "buttons", question: "Durée de votre engagement ?", options: ["Pas engagé", "Moins d'1 an", "Plus d'1 an", "Je ne sais pas"] },
+      { type: "buttons", question: "Pourquoi souhaitez-vous changer ?", options: ["Prix", "Service client", "Qualité réseau", "Autre"] },
+      { type: "dual-input", question: "Quelle est votre adresse complète ?" },
+      { type: "dual-input-name", question: "Merci ! Et votre identité ?" },
+      { type: "dual-input-contact", question: "Dernière étape : vos coordonnées." }
+    ];
+
+    let currentStep = 0;
+    const chat = document.getElementById("chat");
+    const question = document.getElementById("question");
+    const responseArea = document.getElementById("responseArea");
+
+    function showStep() {
+      const step = steps[currentStep];
+      question.textContent = step.question;
+      responseArea.innerHTML = "";
+
+      if (step.type === "buttons") {
+        step.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.textContent = opt;
+          btn.onclick = () => nextStep(opt);
+          responseArea.appendChild(btn);
+        });
+      } else if (step.type === "dual-input") {
+        const input1 = document.createElement("input");
+        input1.placeholder = "Rue et numéro";
+        const input2 = document.createElement("input");
+        input2.placeholder = "Code postal";
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = "Suivant";
+        btn.onclick = () => {
+          const val1 = input1.value.trim();
+          const val2 = input2.value.trim();
+          if (val1.length < 5 || isNaN(val2)) {
+            alert("Merci d'entrer une adresse et un code postal valides.");
+          } else {
+            nextStep(val1 + ", " + val2);
+          }
+        };
+        responseArea.appendChild(input1);
+        responseArea.appendChild(input2);
+        responseArea.appendChild(btn);
+      } else if (step.type === "dual-input-name") {
+        const input1 = document.createElement("input");
+        input1.placeholder = "Prénom";
+        const input2 = document.createElement("input");
+        input2.placeholder = "Nom";
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = "Suivant";
+        btn.onclick = () => {
+          const val1 = input1.value.trim();
+          const val2 = input2.value.trim();
+          if (!val1 || !val2) {
+            alert("Merci de compléter votre prénom et nom.");
+          } else {
+            nextStep(val1 + " " + val2);
+          }
+        };
+        responseArea.appendChild(input1);
+        responseArea.appendChild(input2);
+        responseArea.appendChild(btn);
+      } else if (step.type === "dual-input-contact") {
+        const input1 = document.createElement("input");
+        input1.placeholder = "Adresse e-mail";
+        const input2 = document.createElement("input");
+        input2.placeholder = "Numéro de téléphone";
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = "Envoyer";
+        btn.onclick = () => {
+          const email = input1.value.trim();
+          const tel = input2.value.trim();
+          if (!email.includes("@") || tel.length < 8 || isNaN(tel)) {
+            alert("Merci d'entrer des coordonnées valides.");
+          } else {
+            nextStep("Email : " + email + " / Tel : " + tel);
+          }
+        };
+        responseArea.appendChild(input1);
+        responseArea.appendChild(input2);
+        responseArea.appendChild(btn);
+      }
+    }
+
+    function nextStep(answer) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.style.backgroundColor = "#333";
+      bubble.style.alignSelf = "center";
+      bubble.textContent = answer;
+      chat.insertBefore(bubble, responseArea);
+
+      currentStep++;
+      if (currentStep < steps.length) {
+        setTimeout(() => showStep(), 600);
+      } else {
+        question.innerHTML = "Merci, je vous recontacterai au plus vite pour vous faire économiser. ⚡️";
+        responseArea.innerHTML = "";
+      }
+    }
+
+    showStep();
+  </script>
+</body>
+</html>
